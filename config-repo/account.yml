@@ -1,0 +1,14 @@
+spring:
+  profiles: dev
+custom:
+  admin: devAdmin
+---
+spring:
+  profiles: st
+custom:
+  admin: stAdmin
+---
+spring:
+  profiles: prod
+custom:
+  admin: prodAdmin

@@ -1,0 +1,36 @@
+spring:
+  profiles: dev
+  rabbitmq:
+    host: dev.eomdev.com
+    port: 5672
+    username: devUser
+    password: devPassword
+    virtual-host: vhost01
+server:
+  port: 9998
+custom:
+  message: Hello, api-dev!
+---
+spring:
+  profiles: st
+  rabbitmq:
+    host: st.eomdev.com
+    port: 5672
+    username: stUser
+    password: stPassword
+    virtual-host: vhost02
+server:
+  port: 9999
+custom:
+  message: Hello, api ST!
+---
+spring:
+  profiles: prod
+  rabbitmq:
+    host: eomdev.com
+    port: 5672
+    username: user
+    password: password
+    virtual-host: vhost03
+custom:
+  message: Hello, api prod!

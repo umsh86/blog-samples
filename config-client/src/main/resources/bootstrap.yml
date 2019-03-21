@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: api
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: ['refresh']
+---
+spring:
+  profiles: dev
+  cloud:
+    config:
+      uri: http://localhost:8888
+---
+spring:
+  profiles: st
+  cloud:
+    config:
+      uri: http://stapi.eomdev.com
+---
+spring:
+  profiles: prod
+  cloud:
+    config:
+      uri: http://api.eomdev.com

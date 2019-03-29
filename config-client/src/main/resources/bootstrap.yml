@@ -3,13 +3,6 @@ spring:
     active: dev
   application:
     name: api
-
-management:
-  endpoints:
-    web:
-      base-path: /actuator
-      exposure:
-        include: ['refresh']
 ---
 spring:
   profiles: dev

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: user-apigateway
+zuul:
+  routes:
+    user-apigateway:
+      path: /user/**
+      serviceId: user-service
+    room-service:
+      path: /room/**
+      url: http://room.rsupport.com/v1/room
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

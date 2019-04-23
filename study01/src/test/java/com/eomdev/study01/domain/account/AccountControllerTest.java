@@ -90,12 +90,11 @@ public class AccountControllerTest extends IntegrationTest {
 
   @DisplayName("Account를 수정. 정상인 경우")
   @Test
-  public void accountUpdate() throws Exception {
+  public void accountUpdate_success() throws Exception {
 
-    // given -> modelMapper 사용으로 변경하는게 좋을려나?
+    // given -> modelMapper 사용 고려해보기
     String updateName = "updateName";
     AccountDto.UpdateRequest updateRequest = AccountDto.UpdateRequest.builder()
-        .id(saveAccount.getId())
         .name(updateName)
         .currentPassword(saveAccount.getPassword())
         .build();
@@ -109,13 +108,30 @@ public class AccountControllerTest extends IntegrationTest {
         .andExpect(jsonPath("_links.query-accounts").exists())
         .andExpect(jsonPath("_links.update-account").exists())
         .andExpect(jsonPath("_links.profile").exists())
-
-
     ;
 
+  }
 
+  @DisplayName("Account를 수정. 패스워드가 일치하지 않는 경우")
+  @Test
+  public void accountUpdate_fail() throws Exception {
+
+    String updateName = "updateName";
+    AccountDto.UpdateRequest updateRequest = AccountDto.UpdateRequest.builder()
+        .name(updateName)
+        .currentPassword("9999")
+        .build();
+
+    mockMvc.perform(put("/accounts/{id}", saveAccount.getId())
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .content(objectMapper.writeValueAsString(updateRequest)))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("status").value(400))
+        .andExpect(jsonPath("code").value("C005"));
 
   }
+
 
   @DisplayName("Account 1건 조회. 데이터가 존재하지 않는 경우")
   @Test

@@ -40,22 +40,21 @@ public class AccountDto {
   }
 
   @Getter
-  public static class AccountResource extends Resource<CreateResponse> {
+  public static class AccountResource extends Resource<AccountResponse> {
 
-    public AccountResource(CreateResponse content, Link... links) {
+    public AccountResource(AccountResponse content, Link... links) {
       super(content, links);
       ControllerLinkBuilder selfLinkBuilder = linkTo(AccountController.class).slash(content.getId());
       add(linkTo(AccountController.class).slash(content.getId()).withSelfRel());
       add(linkTo(AccountController.class).withRel("query-accounts"));
       add(selfLinkBuilder.withRel("update-account"));
-      add(new Link("/docs/index.html#resources-events-create").withRel("profile"));
     }
 
   }
 
   @Getter
   @ToString
-  public static class CreateResponse {
+  public static class AccountResponse {
 
     @NotBlank
     private String id;
@@ -66,7 +65,7 @@ public class AccountDto {
     private String name;
 
     @Builder
-    public CreateResponse(String id, Email email, String name) {
+    public AccountResponse(String id, Email email, String name) {
       this.id = id;
       this.email = email;
       this.name = name;
@@ -84,13 +83,10 @@ public class AccountDto {
     @NotBlank
     private String currentPassword;
 
-    private String newPassword;
-
     @Builder
-    public UpdateRequest(@NotBlank String name, @NotBlank String currentPassword, String newPassword) {
+    public UpdateRequest(@NotBlank String name, @NotBlank String currentPassword) {
       this.name = name;
       this.currentPassword = currentPassword;
-      this.newPassword = newPassword;
     }
   }
 

@@ -1,5 +1,6 @@
 package com.eomdev.study01.domain.account;
 
+import com.eomdev.study01.common.exception.PasswordInvalidException;
 import com.eomdev.study01.model.Email;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "mt_account")
@@ -58,11 +60,19 @@ public class Account {
     account.password = request.getPassword();
     return account;
   }
-//
-//  public void updateProfile(AccountDto.UpdateRequest updateRequest) {
-//    this.name = updateRequest.getName();
-//    this.password = updateRequest.getPassword();
-//  }
+
+  public void updateProfile(AccountDto.UpdateRequest updateRequest) {
+    String currentPassword = updateRequest.getCurrentPassword();
+    if (!checkPassword(currentPassword)) {
+      throw new PasswordInvalidException(currentPassword);
+    }
+
+    this.name = updateRequest.getName();
+  }
+
+  private boolean checkPassword(String password) {
+    return this.password.equals(password);
+  }
 
 
 }

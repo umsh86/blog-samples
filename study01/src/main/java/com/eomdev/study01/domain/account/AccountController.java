@@ -65,7 +65,7 @@ public class AccountController {
   public ResponseEntity delete(@PathVariable String id) {
     Account account = accountHelperService.findById(id);
     accountRepository.delete(account);
-    return null; // TODO : 미완성
+    return ResponseEntity.ok().build();
   }
 
 

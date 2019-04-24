@@ -10,6 +10,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class AccountControllerTest extends IntegrationTest {
 
@@ -165,10 +167,33 @@ public class AccountControllerTest extends IntegrationTest {
 
   }
 
-  // CRUD
+  @DisplayName("존재하는 계정 삭제. 성공")
+  @Test
+  public void accountDelete_success() throws Exception {
+    // when, then
+    mockMvc.perform(delete("/accounts/{id}", saveAccount.getId())
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .accept(MediaTypes.HAL_JSON_UTF8_VALUE))
+        .andDo(print())
+        .andExpect(status().isOk());
 
-  // 회원가입
-  // 회원조회(리스트, 한건)
-  // 회원삭제?
+  }
+
+  @DisplayName("존재하는 계정 삭제. 실패")
+  @Test
+  public void accountDelete_fail() throws Exception {
+
+    // when, then
+    mockMvc.perform(delete("/accounts/{id}", "1233456567")
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .accept(MediaTypes.HAL_JSON_UTF8_VALUE))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+
+  }
+
+
+
+
 
 }

@@ -35,7 +35,7 @@ public class AccountController {
 
     ControllerLinkBuilder selfLinkBuilder = linkTo(AccountController.class).slash(account.getId());
     AccountDto.AccountResource accountResource = new AccountDto.AccountResource(new AccountDto.AccountResponse(account.getId(), account.getEmail(), account.getName()));
-    accountResource.add(new Link("/docs/index.html#resources-account-create").withRel("profile"));
+    accountResource.add(new Link("/docs/index.html#account-create").withRel("profile"));
 
     URI createdUri = selfLinkBuilder.toUri();
     return ResponseEntity.created(createdUri).body(accountResource);
@@ -46,7 +46,7 @@ public class AccountController {
     Account account = accountHelperService.findById(id);
 
     AccountDto.AccountResource accountResource = new AccountDto.AccountResource(new AccountDto.AccountResponse(account.getId(), account.getEmail(), account.getName()));
-    accountResource.add(new Link("/docs/index.html#resources-account-search").withRel("profile"));
+    accountResource.add(new Link("/docs/index.html#account-search").withRel("profile"));
     return ResponseEntity.ok(accountResource);
   }
 
@@ -57,7 +57,7 @@ public class AccountController {
     accountRepository.save(account);
 
     AccountDto.AccountResource accountResource = new AccountDto.AccountResource(new AccountDto.AccountResponse(account.getId(), account.getEmail(), account.getName()));
-    accountResource.add(new Link("/docs/index.html#resources-account-update").withRel("profile"));
+    accountResource.add(new Link("/docs/index.html#account-update").withRel("profile"));
     return ResponseEntity.ok(accountResource);
   }
 

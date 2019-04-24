@@ -10,6 +10,14 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -70,6 +78,39 @@ public class AccountControllerTest extends IntegrationTest {
             .andExpect(jsonPath("_links.query-accounts").exists())
             .andExpect(jsonPath("_links.update-account").exists())
             .andExpect(jsonPath("_links.profile").exists())
+            .andDo(document("account-create",
+                      links(
+                          linkWithRel("self").description("link to self"),
+                          linkWithRel("query-accounts").description("link to query account"),
+                          linkWithRel("update-account").description("link to update account"),
+                          linkWithRel("profile").description("link to profile")
+                      ),
+                      requestHeaders(
+                          headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+                          headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+                      ),
+                      requestFields(
+                          fieldWithPath("name").description("Account name"),
+                          fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
+                          fieldWithPath("email.id").description("not use"),
+                          fieldWithPath("email.host").description("not use"),
+                          fieldWithPath("password").description("Account password")
+                      ),
+                    responseFields(
+                        fieldWithPath("id").description("Account UUID"),
+                        fieldWithPath("name").description("Account name"),
+                        fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
+                        fieldWithPath("email.id").description("Account Email's id"),
+                        fieldWithPath("email.host").description("Account Email's host"),
+
+                        fieldWithPath("_links.self.href").description("link to self"),
+                        fieldWithPath("_links.query-accounts.href").description("link to query account"),
+                        fieldWithPath("_links.update-account.href").description("link to update account"),
+                        fieldWithPath("_links.profile.href").description("link to profile")
+
+                    )
+
+                ))
     ;
   }
 

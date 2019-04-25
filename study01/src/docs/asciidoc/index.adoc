@@ -1,3 +1,6 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
 = Rest Docs API Document
 :doctype: book
 :icons: font
@@ -115,23 +118,6 @@
 응답은 http://stateless.co/hal_specification.html[Hypertext Application from resource to resource. Language (HAL)] 형식을 따른다.
 링크는 `_links`라는 키로 제공한다. 본 API의 사용자(클라이언트)는 URI를 직접 생성하지 않아야 하며, 리소스에서 제공하는 링크를 사용해야 한다.
 
-[[resources]]
-= 리소스
-
-[[resources-index]]
-== 인덱스
-
-인덱스는 서비스 진입점을 제공한다.
-
-
-[[resources-index-access]]
-=== 인덱스 조회
-
-`GET` 요청을 사용하여 인덱스에 접근할 수 있다.
-
-operation::index[snippets='response-body,http-response,links']
-
-[[resources-account]]
 == 계정(Account) 생성
 
 === Request
@@ -140,7 +126,7 @@ Request HTTP Example:
 
 include::{snippets}/account-create/http-request.adoc[]
 
-Request Parameters:
+Request Fields:
 
 include::{snippets}/account-create/request-fields.adoc[]
 
@@ -168,4 +154,124 @@ Links:
 
 include::{snippets}/account-create/links.adoc[]
 
+
+[[account-search]]
+== Account(계정) 조회
+
+=== Request
+
+Request HTTP Example:
+
+include::{snippets}/account-search/http-request.adoc[]
+
+Request Parameters:
+
+include::{snippets}/account-search/path-parameters.adoc[]
+
+
+CURL:
+
+include::{snippets}/account-search/curl-request.adoc[]
+
+
+
+=== Response
+
+Response HTTP Example:
+
+include::{snippets}/account-search/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/account-search/response-fields.adoc[]
+
+
+=== Links
+
+Links:
+
+include::{snippets}/account-search/links.adoc[]
+
+
+
+[[account-update]]
+== Account(계정) 수정
+
+=== Request
+
+Request HTTP Example:
+
+include::{snippets}/account-update/http-request.adoc[]
+
+Request Parameters:
+
+include::{snippets}/account-update/path-parameters.adoc[]
+
+Request Fields:
+
+include::{snippets}/account-update/request-body.adoc[]
+
+
+CURL:
+
+include::{snippets}/account-update/curl-request.adoc[]
+
+
+
+=== Response
+
+Response HTTP Example:
+
+include::{snippets}/account-update/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/account-update/response-fields.adoc[]
+
+
+=== Links
+
+Links:
+
+include::{snippets}/account-update/links.adoc[]
+
+
+
+
+[[account-delete]]
+== Account(계정) 삭제
+
+=== Request
+
+Request HTTP Example:
+
+include::{snippets}/account-delete/http-request.adoc[]
+
+Request Parameters:
+
+include::{snippets}/account-delete/path-parameters.adoc[]
+
+
+CURL:
+
+include::{snippets}/account-search/curl-request.adoc[]
+
+
+
+=== Response
+
+Response HTTP Example:
+
+include::{snippets}/account-delete/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/account-delete/response-fields.adoc[]
+
+
+=== Links
+
+Links:
+
+include::{snippets}/account-delete/links.adoc[]
 

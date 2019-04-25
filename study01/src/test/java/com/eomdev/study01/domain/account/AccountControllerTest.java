@@ -9,19 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.hypermedia.LinkDescriptor;
+import org.springframework.restdocs.payload.FieldDescriptor;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,6 +39,47 @@ public class AccountControllerTest extends IntegrationTest {
 
   private Account saveAccount;
   private Email email;
+
+  private LinkDescriptor[] linkDescriptors = new LinkDescriptor[] {
+      linkWithRel("self").description("link to self"),
+      linkWithRel("profile").description("link to profile"),
+      linkWithRel("query-accounts").description("link to query account"),
+      linkWithRel("update-account").description("link to update account")
+  };
+
+  private FieldDescriptor[] requestDescriptors = new FieldDescriptor[]{
+      fieldWithPath("name").description("Account name"),
+      fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
+      fieldWithPath("email.id").description("not use"),
+      fieldWithPath("email.host").description("not use"),
+      fieldWithPath("password").description("Account password")
+  };
+
+  private FieldDescriptor[] responseDescriptors = new FieldDescriptor[] {
+      fieldWithPath("id").description("Account UUID"),
+      fieldWithPath("name").description("Account name"),
+      fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
+      fieldWithPath("email.id").description("Account Email's id"),
+      fieldWithPath("email.host").description("Account Email's host"),
+
+      fieldWithPath("_links.self.href").description("link to self"),
+      fieldWithPath("_links.profile.href").description("link to profile"),
+      fieldWithPath("_links.query-accounts.href").description("link to query account"),
+      fieldWithPath("_links.update-account.href").description("link to update account")
+  };
+
+  private FieldDescriptor[] errorResponseDescriptors = new FieldDescriptor[] {
+      fieldWithPath("status").description("Account UUID"),
+      fieldWithPath("code").description("이메일주소"),
+      fieldWithPath("message").description("이메일주소"),
+      fieldWithPath("errors").description("오류난 내용들"),
+      fieldWithPath("errors[].field").description("오류난 필드명"),
+      fieldWithPath("errors[].value").description("오류난 필드의 값"),
+      fieldWithPath("errors[].reason").description("오류난 필드의 원인"),
+
+  };
+
+
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -79,36 +124,13 @@ public class AccountControllerTest extends IntegrationTest {
             .andExpect(jsonPath("_links.update-account").exists())
             .andExpect(jsonPath("_links.profile").exists())
             .andDo(document("account-create",
-                      links(
-                          linkWithRel("self").description("link to self"),
-                          linkWithRel("query-accounts").description("link to query account"),
-                          linkWithRel("update-account").description("link to update account"),
-                          linkWithRel("profile").description("link to profile")
-                      ),
+                      links(linkDescriptors),
                       requestHeaders(
                           headerWithName(HttpHeaders.ACCEPT).description("accept header"),
                           headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
                       ),
-                      requestFields(
-                          fieldWithPath("name").description("Account name"),
-                          fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
-                          fieldWithPath("email.id").description("not use"),
-                          fieldWithPath("email.host").description("not use"),
-                          fieldWithPath("password").description("Account password")
-                      ),
-                    responseFields(
-                        fieldWithPath("id").description("Account UUID"),
-                        fieldWithPath("name").description("Account name"),
-                        fieldWithPath("email.value").description("email address ex)umsh86@gmail.com"),
-                        fieldWithPath("email.id").description("Account Email's id"),
-                        fieldWithPath("email.host").description("Account Email's host"),
-
-                        fieldWithPath("_links.self.href").description("link to self"),
-                        fieldWithPath("_links.query-accounts.href").description("link to query account"),
-                        fieldWithPath("_links.update-account.href").description("link to update account"),
-                        fieldWithPath("_links.profile.href").description("link to profile")
-
-                    )
+                      requestFields(requestDescriptors),
+                      responseFields(responseDescriptors)
 
                 ))
     ;
@@ -127,6 +149,14 @@ public class AccountControllerTest extends IntegrationTest {
         .andExpect(jsonPath("_links.query-accounts").exists())
         .andExpect(jsonPath("_links.update-account").exists())
         .andExpect(jsonPath("_links.profile").exists())
+        .andDo(document("account-get",
+            links(linkDescriptors),
+            pathParameters(
+                parameterWithName("id").description("account UUID")
+            ),
+            responseFields(responseDescriptors)
+
+        ))
     ;
 
   }
@@ -151,6 +181,18 @@ public class AccountControllerTest extends IntegrationTest {
         .andExpect(jsonPath("_links.query-accounts").exists())
         .andExpect(jsonPath("_links.update-account").exists())
         .andExpect(jsonPath("_links.profile").exists())
+        .andDo(document("account-update",
+            links(linkDescriptors),
+            pathParameters(
+                parameterWithName("id").description("account UUID")
+            ),
+            requestFields(
+                fieldWithPath("name").description("Account name"),
+                fieldWithPath("currentPassword").description("Account current Account")
+            ),
+            responseFields(responseDescriptors)
+
+        ))
     ;
 
   }
@@ -204,7 +246,11 @@ public class AccountControllerTest extends IntegrationTest {
               .accept(MediaTypes.HAL_JSON_UTF8_VALUE)
               .content(objectMapper.writeValueAsString(createRequest)))
         .andDo(print())
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andDo(document("commmon-error",
+            responseFields(errorResponseDescriptors)
+        ))
+    ;
 
   }
 
@@ -216,7 +262,13 @@ public class AccountControllerTest extends IntegrationTest {
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaTypes.HAL_JSON_UTF8_VALUE))
         .andDo(print())
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andDo(document("account-delete",
+            pathParameters(
+                parameterWithName("id").description("account UUID")
+            )
+        ))
+    ;
 
   }
 

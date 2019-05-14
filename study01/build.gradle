@@ -12,6 +12,7 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.3'
     id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'java'
+    id "com.gorylenko.gradle-git-properties" version "2.0.0"
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -46,10 +47,11 @@ dependencies {
     testRuntime("org.junit.platform:junit-platform-launcher")
     testRuntime("org.junit.jupiter:junit-jupiter-engine")
     testRuntime("org.junit.vintage:junit-vintage-engine")
-
     testCompile('org.junit.jupiter:junit-jupiter-api')
 
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
 
 
 }

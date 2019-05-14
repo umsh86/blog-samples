@@ -9,3 +9,7 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder : trace
     org.hibernate.type.EnumType: trace
+management:
+  info:
+    git:
+      mode: full

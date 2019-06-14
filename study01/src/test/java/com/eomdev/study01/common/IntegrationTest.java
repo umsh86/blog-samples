@@ -27,5 +27,4 @@ public class IntegrationTest {
   protected ObjectMapper objectMapper;
 
 
-
 }

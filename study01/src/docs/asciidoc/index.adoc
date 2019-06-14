@@ -162,16 +162,16 @@ include::{snippets}/account-create/links.adoc[]
 
 Request HTTP Example:
 
-include::{snippets}/account-search/http-request.adoc[]
+include::{snippets}/query-accounts/http-request.adoc[]
 
 Request Parameters:
 
-include::{snippets}/account-search/path-parameters.adoc[]
+include::{snippets}/query-accounts/request-body.adoc[]
 
 
 CURL:
 
-include::{snippets}/account-search/curl-request.adoc[]
+include::{snippets}/query-accounts/curl-request.adoc[]
 
 
 
@@ -179,18 +179,12 @@ include::{snippets}/account-search/curl-request.adoc[]
 
 Response HTTP Example:
 
-include::{snippets}/account-search/http-response.adoc[]
+include::{snippets}/query-accounts/http-response.adoc[]
 
 Response Fields:
 
-include::{snippets}/account-search/response-fields.adoc[]
+include::{snippets}/query-accounts/response-body.adoc[]
 
-
-=== Links
-
-Links:
-
-include::{snippets}/account-search/links.adoc[]
 
 
 
@@ -266,12 +260,4 @@ include::{snippets}/account-delete/http-response.adoc[]
 
 Response Fields:
 
-include::{snippets}/account-delete/response-fields.adoc[]
-
-
-=== Links
-
-Links:
-
-include::{snippets}/account-delete/links.adoc[]
-
+include::{snippets}/account-delete/response-body.adoc[]

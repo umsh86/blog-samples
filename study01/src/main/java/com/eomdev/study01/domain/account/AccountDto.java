@@ -1,11 +1,7 @@
 package com.eomdev.study01.domain.account;
 
 import com.eomdev.study01.model.Email;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -80,13 +76,9 @@ public class AccountDto {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String currentPassword;
-
     @Builder
-    public UpdateRequest(@NotBlank String name, @NotBlank String currentPassword) {
+    public UpdateRequest(@NotBlank String name) {
       this.name = name;
-      this.currentPassword = currentPassword;
     }
   }
 

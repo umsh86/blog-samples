@@ -1,22 +1,11 @@
 package com.eomdev.study01.domain.account;
 
-import com.eomdev.study01.common.exception.PasswordInvalidException;
 import com.eomdev.study01.model.Email;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "mt_account")
@@ -42,15 +31,9 @@ public class Account {
   @Column(length = 100)
   private String password;
 
-
-//  public static Account create(Email email, String name, String password) {
-//    Account account = new Account();
-//    account.email = email;
-//    account.name = name;
-//    account.password = password;
-//    return account;
-//  }
-
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
+  private Set<AccountRole> roles;
 
 
   public static Account create(AccountDto.CreateRequest request) {
@@ -62,17 +45,18 @@ public class Account {
   }
 
   public void updateProfile(AccountDto.UpdateRequest updateRequest) {
-    String currentPassword = updateRequest.getCurrentPassword();
-    if (!checkPassword(currentPassword)) {
-      throw new PasswordInvalidException(currentPassword);
-    }
-
     this.name = updateRequest.getName();
   }
 
   private boolean checkPassword(String password) {
     return this.password.equals(password);
   }
+
+  public void encodePassword(String encodePassword) {
+    this.password = encodePassword;
+  }
+
+
 
 
 }

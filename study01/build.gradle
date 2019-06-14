@@ -52,6 +52,10 @@ dependencies {
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
 
     implementation('org.springframework.boot:spring-boot-starter-actuator')
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure')
+    compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.4.RELEASE'
+
 
 
 }

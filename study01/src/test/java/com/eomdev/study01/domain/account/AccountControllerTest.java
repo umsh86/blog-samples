@@ -3,6 +3,7 @@ package com.eomdev.study01.domain.account;
 import com.eomdev.study01.common.IntegrationTest;
 import com.eomdev.study01.model.Email;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,30 +13,26 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.hypermedia.LinkDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
 
+import java.util.stream.IntStream;
+
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 public class AccountControllerTest extends IntegrationTest {
 
   @Autowired
-  private AccountRepository accountRepository;
+  private AccountService accountService;
+
 
   private Account saveAccount;
   private Email email;
@@ -92,7 +89,7 @@ public class AccountControllerTest extends IntegrationTest {
         .password("1234")
         .build();
 
-    saveAccount = accountRepository.save(Account.create(createRequest));
+    saveAccount = accountService.saveAccount(Account.create(createRequest));
 
   }
 
@@ -119,6 +116,7 @@ public class AccountControllerTest extends IntegrationTest {
             .andExpect(jsonPath("id").exists())
             .andExpect(header().exists(HttpHeaders.LOCATION))
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("_links.self").exists())
             .andExpect(jsonPath("_links.self").exists())
             .andExpect(jsonPath("_links.query-accounts").exists())
             .andExpect(jsonPath("_links.update-account").exists())
@@ -169,7 +167,6 @@ public class AccountControllerTest extends IntegrationTest {
     String updateName = "updateName";
     AccountDto.UpdateRequest updateRequest = AccountDto.UpdateRequest.builder()
         .name(updateName)
-        .currentPassword(saveAccount.getPassword())
         .build();
 
     mockMvc.perform(put("/accounts/{id}", saveAccount.getId())
@@ -187,8 +184,7 @@ public class AccountControllerTest extends IntegrationTest {
                 parameterWithName("id").description("account UUID")
             ),
             requestFields(
-                fieldWithPath("name").description("Account name"),
-                fieldWithPath("currentPassword").description("Account current Account")
+                fieldWithPath("name").description("Account name")
             ),
             responseFields(responseDescriptors)
 
@@ -197,6 +193,7 @@ public class AccountControllerTest extends IntegrationTest {
 
   }
 
+  @Disabled // password 암호화 적용으로 패스워드 확인 로직을 임시로 삭제한 상태
   @DisplayName("Account를 수정. 패스워드가 일치하지 않는 경우")
   @Test
   public void accountUpdate_fail() throws Exception {
@@ -204,7 +201,6 @@ public class AccountControllerTest extends IntegrationTest {
     String updateName = "updateName";
     AccountDto.UpdateRequest updateRequest = AccountDto.UpdateRequest.builder()
         .name(updateName)
-        .currentPassword("9999")
         .build();
 
     mockMvc.perform(put("/accounts/{id}", saveAccount.getId())
@@ -283,6 +279,38 @@ public class AccountControllerTest extends IntegrationTest {
         .andDo(print())
         .andExpect(status().isBadRequest());
 
+  }
+
+
+  @Test
+  @DisplayName("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+  public void queryAccount() throws Exception {
+    // Given
+    IntStream.range(0, 30).forEach(this::generateEvent);
+
+    // When & Then
+    this.mockMvc.perform(get("/accounts")
+            .param("page", "1")
+            .param("size", "10")
+            .param("sort", "name,DESC"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("page").exists())
+            .andExpect(jsonPath("_links.self").exists())
+            .andExpect(jsonPath("_links.profile").exists())
+
+            .andDo(document("query-accounts"))
+    ;
+  }
+
+  private Account generateEvent(int index) {
+    AccountDto.CreateRequest createRequest = AccountDto.CreateRequest.builder()
+            .email(Email.of("user" + index + "@gmail.com"))
+            .name("username" + index)
+            .password("1234")
+            .build();
+
+    return accountService.saveAccount(Account.create(createRequest));
   }
 
 

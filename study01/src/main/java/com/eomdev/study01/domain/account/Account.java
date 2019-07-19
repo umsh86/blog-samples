@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -33,7 +34,7 @@ public class Account {
 
   @ElementCollection(fetch = FetchType.EAGER)
   @Enumerated(EnumType.STRING)
-  private Set<AccountRole> roles;
+  private Set<AccountRole> roles = new HashSet<>();
 
 
   public static Account create(AccountDto.CreateRequest request) {
